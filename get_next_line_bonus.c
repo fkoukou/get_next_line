@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fakoukou <fakoukou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/22 13:44:57 by fakoukou          #+#    #+#             */
-/*   Updated: 2024/12/07 10:37:30 by fakoukou         ###   ########.fr       */
+/*   Created: 2024/11/30 09:44:21 by fakoukou          #+#    #+#             */
+/*   Updated: 2024/12/07 10:27:09 by fakoukou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*read_until_newline(int fd, char *str)
 {
@@ -49,7 +49,7 @@ char	*extract_line(char *str)
 		i++;
 	if (str[i] == '\n')
 		i++;
-	line = (char *)malloc(i + 1);
+	line = malloc(i + 1);
 	if (!line)
 		return (NULL);
 	i = 0;
@@ -72,7 +72,7 @@ char	*get_remaining_buffer(char *str)
 
 	i = 0;
 	j = 0;
-	while (str && str[i] && str[i] != '\n')
+	while (str[i] && str[i] != '\n')
 		i++;
 	if (!str[i])
 	{
@@ -96,14 +96,14 @@ char	*get_remaining_buffer(char *str)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*str;
+	static char	*str[1024];
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	str = read_until_newline(fd, str);
-	if (!str)
+	str[fd] = read_until_newline(fd, str[fd]);
+	if (!str[fd])
 		return (NULL);
-	line = extract_line(str);
-	str = get_remaining_buffer(str);
+	line = extract_line(str[fd]);
+	str[fd] = get_remaining_buffer(str[fd]);
 	return (line);
 }
